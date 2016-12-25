@@ -17,6 +17,9 @@
 #Username: cloud
 #Password: #LAB_LOCATION
 
+#Template chix-mesos-spark-hadoop has issue of attached block
+#Template chix-hybrid is the newest version
+
 
 #Update
 sudo apt-get update
@@ -84,6 +87,11 @@ cat /var/log/mesos/mesos-master.INFO
 #If you need to set this master node as an agent node
 #example: 
 #mesos-agent --master=zk://199.60.17.185:2181,199.60.17.219:2181,199.60.17.223:2181/mesos --work_dir=/var/lib/mesos
+
+
+
+#hadoop setup
+https://hadoop.apache.org/docs/r2.7.0/hadoop-project-dist/hadoop-common/ClusterSetup.html
 
 
 
