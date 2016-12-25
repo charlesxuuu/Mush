@@ -1,0 +1,133 @@
+
+
+#Configure Mesos 1.0.0 on Ubuntu 14.04
+
+#Master type:sc.m4.2xlarge
+#Master CloudID: chix-master-#NUM
+#Master Hostname: master#NUM
+
+#Agent type:sc.m4.2xlarge
+#Agent CloudID: chix-agent-#NUM
+#CloudID: chix-agent-#NUM
+#Hostname: agent#NUM
+
+#Username: cloud
+#Password: #LAB_LOCATION
+
+
+#Update
+sudo apt-get update
+sudo apt-get upgrade
+sudo reboot
+
+#Add dist
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv E56151BF
+DISTRO=$(lsb_release -is | tr '[:upper:]' '[:lower:]')
+CODENAME=$(lsb_release -cs)
+echo "deb http://repos.mesosphere.com/${DISTRO} ${CODENAME} main" | sudo tee /etc/apt/sources.list.d/mesosphere.list
+
+#Install Mesos
+sudo apt-get -y update
+sudo apt-get -y install mesos
+
+#Edit the hostname and hosts
+#Example:
+#127.0.0.1       localhost
+#199.60.17.185   master1
+#199.60.17.219   master2
+#199.60.17.223   master3
+#199.60.17.224   agent1
+#199.60.17.226   agent2
+#199.60.17.227   agent3
+#199.60.17.228   agent4
+#199.60.17.234   agent5
+#::1     localhost ip6-localhost ip6-loopback
+#ff02::1 ip6-allnodes
+#ff02::2 ip6-allrouters
+
+sudo vim /etc/hostname 
+sudo vim /etc/hosts
+
+#Configure Zookeeper id
+#echo 2 >> /etc/zookeeper/conf/myid
+vim /etc/zookeeper/conf/myid
+
+#Configure IP address and id in zoo.cfg
+#Example:
+#server.1=199.60.17.185:2888:3888
+#server.2=199.60.17.219:2888:3888
+#server.3=199.60.17.223:2888:3888
+vim /etc/zookeeper/conf/zoo.cfg 
+
+
+#Configure Mesos 
+#Example: zk://199.60.17.185:2181,199.60.17.219:2181,199.60.17.223:2181/mesos
+#Example: 3master quorum=2, 5master quorum=3 
+vim /etc/mesos/zk 
+vim /etc/mesos-master/quorum 
+
+
+service mesos-master restart
+service mesos-master status
+
+
+#Check the log
+cat /var/log/mesos/mesos-master.FATAL 
+cat /var/log/mesos/mesos-master.ERROR
+cat /var/log/mesos/mesos-master.INFO
+
+
+
+
+
+
+Shell编程【练习】批量更改主机名
+
+
+  17  vim /etc/zookeeper/conf/myid
+   18  ifconfig
+   19  vim /etc/zookeeper/conf/myid
+   20  vim /etc/zookeeper/conf/zoo.cfg 
+   21  service zookeeper restart
+   22  service zookeeper status
+   23  vim /etc/zookeeper/conf/zoo.cfg 
+   24  vim /etc/zookeeper/conf/myid
+   25  ifconfig
+   26  service zookeeper status
+   27  vim /etc/mesos/zk 
+   28  vim /etc/mesos-master/quorum 
+   29  service mesos-master restart
+   30  pgrep mesos
+   31  cat /var/log/mesos/mesos-master.FATAL 
+   32  cat /var/log/mesos/mesos-master.ERROR
+   33  cat /var/log/mesos/mesos-master.INFO
+   34  cat /var/log/mesos/mesos-master.FATAL 
+   35  cat /var/log/mesos/mesos-master.ERROR .
+   36  cat /var/log/mesos/mesos-master.ERRO
+   37  cat /var/log/mesos/mesos-master.ERROR
+   38  vim /etc/mesos/zk
+   39  mesos-agent --master=zk://199.60.17.185:2181,199.60.17.219:2181,199.60.17.223:2181/mesos --work_dir=/var/lib/mesos
+   40  service mesos-slave start
+   41  service mesos-slave stop
+   42  service mesos-master stop
+   43  service zookeeper stop
+   44  vim /etc/hosts
+   45  vim /etc/hostname
+   46  rm -rf /var/log/mesos/*
+   47  rm -rf /var/log/zookeeper/*
+   48  shutdown -r now
+   49  service zookeeper status
+   50  service mesos-master status
+   51  vim /etc/mesos/zk 
+   52  service
+   53  service --status-all
+   54  service mesos-master
+   55  service mesos
+   56  ls
+   57  exit
+   58  ls
+   59  cd
+   60  ls
+   61  locate mesos
+   62  history
+
