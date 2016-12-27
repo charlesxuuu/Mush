@@ -42,14 +42,14 @@ sudo apt-get -y install mesos
 #Edit the hostname and hosts
 #Example:
 #127.0.0.1       localhost
-#199.60.17.185   master1
+#199.60.17.228   master1
 #199.60.17.219   master2
 #199.60.17.223   master3
-#199.60.17.224   agent1
+#199.60.17.222   agent1
 #199.60.17.226   agent2
 #199.60.17.227   agent3
-#199.60.17.228   agent4
-#199.60.17.234   agent5
+
+
 #::1     localhost ip6-localhost ip6-loopback
 #ff02::1 ip6-allnodes
 #ff02::2 ip6-allrouters
@@ -64,7 +64,7 @@ sudo vim /etc/zookeeper/conf/myid
 
 #Configure IP address and id in zoo.cfg
 #Example:
-#server.1=199.60.17.185:2888:3888
+#server.1=199.60.17.228:2888:3888
 #server.2=199.60.17.219:2888:3888
 #server.3=199.60.17.223:2888:3888
 sudo vim /etc/zookeeper/conf/zoo.cfg 
@@ -86,12 +86,167 @@ cat /var/log/mesos/mesos-master.INFO
 
 #If you need to set this master node as an agent node
 #example: 
-#mesos-agent --master=zk://199.60.17.185:2181,199.60.17.219:2181,199.60.17.223:2181/mesos --work_dir=/var/lib/mesos
+#mesos-agent --master=zk://199.60.17.228:2181,199.60.17.219:2181,199.60.17.223:2181/mesos --work_dir=/var/lib/mesos
 
 
 
 #hadoop setup
+https://hadoop.apache.org/docs/r2.7.0/hadoop-project-dist/hadoop-common/SingleCluster.html
 https://hadoop.apache.org/docs/r2.7.0/hadoop-project-dist/hadoop-common/ClusterSetup.html
+#currently use hadoop version 2.7.0
+#Download
+http://www.apache.org/dyn/closer.cgi/hadoop/common/hadoop-2.7.0
+
+
+
+#Install openjdk-7-jdk 
+sudo apt-get install openjdk-7-jdk
+
+#Set passphraseless ssh
+
+ssh-keygen -t dsa -P '' -f ~/.ssh/id_dsa
+cat ~/.ssh/id_dsa.pub >> ~/.ssh/authorized_keys
+cp ~/.ssh/id_dsa.pub id_dsa.pub
+
+
+
+#set etc/hadoop/configuration files:
+
+1. etc/hadoop/hadoop-env.sh
+#Corresponding openjdk-7-jdk
+export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64/
+
+2. etc/hadoop/core-site.xml
+<configuration>
+        <property>
+                <name>fs.defaultFS</name>
+                <value>hdfs://master1:9000</value>
+        </property>
+        <property>
+                <name>io.file.buffer.size</name>
+                <value>131072</value>
+        </property>
+</configuration>
+
+3. etc/hadoop/hdfs-site.xml
+<configuration>
+<property>
+        <name>dfs.namenode.name.dir</name>
+        <value>file:/home/cloud/hadoop/dfs/name</value>
+</property>
+<property>
+        <name>dfs.datanode.data.dir</name>
+        <value>file:/home/cloud/hadoop/dfs/data</value>
+</property>
+
+<property>
+        <name>dfs.replication</name>
+        <value>3</value>
+</property>
+</configuration>
+
+4.etc/hadoop/mapred-site.xml
+<configuration>
+    <property>
+        <name>mapreduce.framework.name</name>
+        <value>yarn</value>
+    </property>
+</configuration>
+
+5.etc/hadoop/slaves
+agent1
+agent2
+agent3
+
+#copy to slaves and install java on slaves
+#set ssh and clean legacy temp folder
+scp -r hadoop-2.7.0 id_dsa.pub cloud@agent1:~/
+
+
+#now let's start
+#HDFS format
+bin/hdfs namenode -format
+
+
+
+
+#Start
+./sbin/start-dfs.sh
+./sbin/start-yarn.sh
+or
+./sbin/start-all.sh
+
+#Wordcount 
+bin/hadoop dfsadmin -report
+
+bin/hadoop fs -mkdir /test
+bin/hadoop fs -ls /
+bin/hadoop fs -put * /test
+bin/hadoop fs -rm -R /testoutput1
+bin/hadoop dfs -setrep -w 3 -R /
+bin/hadoop fsck -racks
+
+./bin/hadoop jar ./share/hadoop/mapreduce/sources/hadoop-mapreduce-examples-2.7.0-sources.jar org.apache.hadoop.examples.WordCount /test /testoutput
+./bin/hadoop jar ./share/hadoop/mapreduce/sources/hadoop-mapreduce-examples-2.7.0-sources.jar org.apache.hadoop.examples.WordCount /test /testoutput3
+
+
+bin/hadoop fs -cat /testoutput/part-r-00000
+
+
+
+############################################################
+
+#Other examples
+./bin/hadoop jar /home/ubuntu/hadoop-2.2.0/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.2.0.jar pi 16 1000000
+./bin/hadoop jar /home/ubuntu/hadoop-2.2.0/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.2.0.jar randomwriter /randomwriter
+./bin/hadoop jar /home/ubuntu/hadoop-2.2.0/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.2.0.jar sort /randomwriter /sort
+./bin/hadoop jar /home/ubuntu/hadoop-2.2.0/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.2.0.jar teragen 300000000 /terasort
+./bin/hadoop jar /home/ubuntu/hadoop-2.2.0/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.2.0.jar terasort /terasort /terasortoutput1
+./bin/hadoop jar /home/ubuntu/hadoop-2.2.0/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.2.0.jar terasort /terasort /terasortoutput2
+./bin/hadoop jar /home/ubuntu/hadoop-2.2.0/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.2.0.jar terasort /terasort /terasortoutput3
+
+
+
+
+
+For subsequent clean:
+ssh ubuntu@hostXX "rm -rf /home/ubuntu/tmp/* /home/ubuntu/dfs/name/* /home/ubuntu/dfs/data/*"
+scp /home/ubuntu/hadoop-2.2.0/etc/hadoop/* ubuntu@ip-10-0-0-101:~/hadoop-2.2.0/etc/hadoop/
+
+export HADOOP_HOME=/home/ubuntu/hadoop-2.2.0
+export PATH=$HADOOP_HOME/bin:$PATH:$JAVA_HOME\bin
+
+Start history server
+./sbin/mr-jobhistory-daemon.sh start historyserver
+
+hadoop fs search file
+./bin/hadoop fs -ls -R / |grep [filename]
+
+hadoop remove nodes
+
+vim exclude
+
+
+I've noticed the datanode process dies once decomissioning is done, which is good. This is what I do to remove a node:
+
+Add node to mapred.exclude
+Add node to hdfs.exclude
+$ hadoop mradmin -refreshNodes
+$ hadoop dfsadmin -refreshNodes
+$ hadoop-daemon.sh stop tasktracker
+
+To add the node back in (assuming it was removed like above), this is what I'm doing.
+
+Remove from mapred.exclude
+Remove from hdfs.exclude
+$ hadoop mradmin -refreshNodes
+$ hadoop dfsadmin -refreshNodes
+$ hadoop-daemon.sh start tasktracker
+$ hadoop-daemon.sh start datanode
+
+
+
+
 
 
 
