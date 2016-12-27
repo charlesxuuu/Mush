@@ -167,14 +167,16 @@ scp -r hadoop-2.7.0 id_dsa.pub cloud@agent1:~/
 #HDFS format
 bin/hdfs namenode -format
 
-
-
-
 #Start
 ./sbin/start-dfs.sh
 ./sbin/start-yarn.sh
 or
 ./sbin/start-all.sh
+
+
+#Jps on namenode: NameNode SecondaryNameNode ResourceManager Jps
+#Jps on datanode: DataNode NodeManager Jps 
+
 
 #Wordcount 
 bin/hadoop dfsadmin -report
@@ -191,6 +193,33 @@ bin/hadoop fsck -racks
 
 
 bin/hadoop fs -cat /testoutput/part-r-00000
+
+
+
+#Add a node to cluster
+#agent node
+#chix-mush-agent as a template
+#mesos framework as usual
+#Update IP address and hostname
+sudo vim /etc/hosts
+sudo vim /etc/hostname
+
+
+#Update master node information
+sudo vim /etc/hosts
+
+#Update hadoop namenode 
+vim etc/hadoop/slaves
+
+
+#remove legacy folder
+rm -rf hadoop
+
+#start hdfs and yarn manager framework
+sbin/hadoop-daemon.sh start datanode
+sbin/yarn-daemon.sh start nodemanager
+
+
 
 
 
