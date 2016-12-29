@@ -1,0 +1,19 @@
+
+de-04 - Marathon
+
+$ sudo apt-key adv --keyserver keyserver.ubuntu.com --recv E56151BF
+$ DISTRO=$(lsb_release -is | tr '[:upper:]' '[:lower:]')
+$ CODENAME=$(lsb_release -cs)
+$ echo "deb http://repos.mesosphere.io/${DISTRO} ${CODENAME} main" | \
+sudo tee /etc/apt/sources.list.d/mesosphere.list
+$ sudo apt-get -y update
+$ sudo apt-get -y install mesos marathon
+$ echo manual | sudo tee /etc/init/mesos-master.override
+$ echo manual | sudo tee /etc/init/mesos-slave.override
+$ echo manual | sudo tee /etc/init/zookeeper.override
+$ echo zk://10.1.200.11:2181,10.1.200.12:2181,10.1.200.13:2181/mesos | sudo tee /etc/mesos/zk
+$ sudo vi /etc/init/marathon.conf
+	Change to:    exec /usr/local/bin/marathon --hostname 10.1.200.11
+$ sudo reboot
+
+after reboot I also tried change the LIBPROCESS_IP env variable to 10.1.200.30 (IP address of the Marathon host) and restarting the marathon service. 
