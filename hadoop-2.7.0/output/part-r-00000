@@ -1,0 +1,11 @@
+6	dfs.audit.logger
+4	dfs.class
+3	dfs.server.namenode.
+2	dfs.period
+2	dfs.audit.log.maxfilesize
+2	dfs.audit.log.maxbackupindex
+1	dfsmetrics.log
+1	dfsadmin
+1	dfs.servers
+1	dfs.replication
+1	dfs.file
