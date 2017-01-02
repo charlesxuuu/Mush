@@ -2,7 +2,7 @@
 
 #Configure Mesos 1.0.0 on Ubuntu 14.04
 
-
+#XXX.XXX.XXX: #subnet
 #Master type:sc.m4.2xlarge
 #Master CloudID: chix-master-#NUM
 #Master Hostname: master#NUM
@@ -42,13 +42,13 @@ sudo apt-get -y install mesos
 #Edit the hostname and hosts
 #Example:
 #127.0.0.1       localhost
-#199.60.17.228   master1
-#199.60.17.219   master2
-#199.60.17.223   master3
-#199.60.17.222   agent1
-#199.60.17.226   agent2
-#199.60.17.227   agent3
-#199.60.17.221	 agent4
+#XXX.XXX.XXX.228   master1
+#XXX.XXX.XXX.219   master2
+#XXX.XXX.XXX.223   master3
+#XXX.XXX.XXX.222   agent1
+#XXX.XXX.XXX.226   agent2
+#XXX.XXX.XXX.227   agent3
+#XXX.XXX.XXX.221	 agent4
 
 
 #::1     localhost ip6-localhost ip6-loopback
@@ -65,19 +65,19 @@ sudo vim /etc/zookeeper/conf/myid
 
 #Configure IP address and id in zoo.cfg
 #Example:
-#server.1=199.60.17.228:2888:3888
-#server.2=199.60.17.219:2888:3888
-#server.3=199.60.17.223:2888:3888
+#server.1=XXX.XXX.XXX.228:2888:3888
+#server.2=XXX.XXX.XXX.219:2888:3888
+#server.3=XXX.XXX.XXX.223:2888:3888
 sudo vim /etc/zookeeper/conf/zoo.cfg 
 
 
 #Configure Mesos 
-#Example: zk://199.60.17.228:2181,199.60.17.219:2181,199.60.17.223:2181/mesos
+#Example: zk://XXX.XXX.XXX.228:2181,XXX.XXX.XXX.219:2181,XXX.XXX.XXX.223:2181/mesos
 #Example: 3master quorum=2, 5master quorum=3 
 
 sudo vim /etc/mesos/zk 
 sudo vim /etc/mesos-master/quorum 
-echo 199.60.17.228 | sudo tee /etc/mesos-master/ip
+echo XXX.XXX.XXX.228 | sudo tee /etc/mesos-master/ip
 echo master1 | sudo tee /etc/mesos-master/hostname
 
 sudo service mesos-master restart
@@ -91,7 +91,7 @@ cat /var/log/mesos/mesos-master.INFO
 
 #If you need to set this master node as an agent node
 #example: 
-#mesos-agent --master=zk://199.60.17.228:2181,199.60.17.219:2181,199.60.17.223:2181/mesos --work_dir=/var/lib/mesos
+#mesos-agent --master=zk://XXX.XXX.XXX.228:2181,XXX.XXX.XXX.219:2181,XXX.XXX.XXX.223:2181/mesos --work_dir=/var/lib/mesos
 
 
 
@@ -183,8 +183,8 @@ or
 #Jps on datanode: DataNode NodeManager Jps 
 
 #URL check:
-#Mesos Overview: http://199.60.17.228:5050
-#Hadoop Overview: http://199.60.17.228:50070/dfshealth.html#tab-overview
+#Mesos Overview: http://XXX.XXX.XXX.228:5050
+#Hadoop Overview: http://XXX.XXX.XXX.228:50070/dfshealth.html#tab-overview
 
 
 #Wordcount 

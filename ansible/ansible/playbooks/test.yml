@@ -1,0 +1,12 @@
+---
+
+# This playbook copies local /etc/hosts to all the remote servers
+
+- name: copy local etchosts to remote servers
+  hosts: all
+  remote_user: cloud
+  sudo: yes
+  tasks:
+    - name: copy the local etc/hosts to remote etc/hosts
+      copy: src=/etc/hosts dest=/etc/hosts
+

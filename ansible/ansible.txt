@@ -1,0 +1,8 @@
+
+
+copied id_rsa.pub to all the machine
+
+sudo apt-get install ansible
+
+
+
