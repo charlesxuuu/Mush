@@ -298,3 +298,8 @@ $ hadoop-daemon.sh start datanode
    61  locate mesos
    62  history
 
+
+
+Start a Spark Shell with the Mesos and Zookeeper
+
+$ cloud@master1:~/spark-2.0.0-bin-hadoop2.7/bin$ ./spark-shell --master mesos://zk://XXX.XXX.XXX.228:2181,XXX.XXX.XXX.223:2181,XXX.XXX.XXX.219:2181/mesos
